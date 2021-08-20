@@ -35,6 +35,8 @@
 #'                        sampling algorithm.
 #' @param n_samples       The number of random points to take.
 #' @param multicores      The number of cores available for active learning.
+#' @param roi        An \code{sf} or \code{sfc} from sf package.
+
 #' @return                A sits tibble with the EGAL metric. This metric
 #'                        ranks samples based on their density and diversity.
 #'                        Those samples with highest EGAL should be selected
@@ -48,7 +50,8 @@ sits_al_egal <- function(samples_tb,
                          beta = alpha,
                          w = 0.5,
                          n_samples = 1000,
-                         multicores = 2) {
+                         multicores = 2,
+                         roi = NULL) {
 
     sits:::.sits_tibble_test(samples_tb)
 
@@ -69,7 +72,10 @@ sits_al_egal <- function(samples_tb,
     #     labelled neighbor.
 
     # Get new samples and merge them to the original sits tibble.
-    points_tb <- .sits_get_random_points(data_cube, n_samples, multicores)
+    points_tb <- .sits_get_random_points(data_cube,
+                                         n_samples,
+                                         multicores,
+                                         roi)
     dataset_tb <- dplyr::bind_rows(samples_tb, points_tb)
 
     # Compute similarity.

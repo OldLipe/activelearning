@@ -12,20 +12,35 @@
 #' @param n_samples  The number of random points to take. The returned
 #'                   sample size may be less than the requested size.
 #' @param multicores The number of cores available for active learning.
+#' @param roi        An \code{sf} or \code{sfc} from sf package.
 #'
 #' @return           A sits tibble of samples, including their time series.
 #'
-.sits_get_random_points <- function(data_cube, n_samples, multicores){
+.sits_get_random_points <- function(data_cube, n_samples, multicores,
+                                    roi = NULL){
 
-    # Get the extent of the data cube.
-    xmin <- data_cube[["xmin"]]
-    xmax <- data_cube[["xmax"]]
-    ymin <- data_cube[["ymin"]]
-    ymax <- data_cube[["ymax"]]
-    pol <- sf::st_sfc(sf::st_polygon(list(rbind(c(xmin, ymin), c(xmax, ymin),
-                                                c(xmax, ymax), c(xmin, ymax),
-                                                c(xmin, ymin)))))
-    sf::st_crs(pol) <- data_cube[["crs"]]
+    if (is.null(roi)) {
+
+        # Get the extent of the data cube.
+        xmin <- data_cube[["xmin"]]
+        xmax <- data_cube[["xmax"]]
+        ymin <- data_cube[["ymin"]]
+        ymax <- data_cube[["ymax"]]
+        pol <- sf::st_sfc(sf::st_polygon(list(rbind(c(xmin, ymin), c(xmax, ymin),
+                                                    c(xmax, ymax), c(xmin, ymax),
+                                                    c(xmin, ymin)))))
+
+        sf::st_crs(pol) <- data_cube[["crs"]]
+    } else {
+
+        if (!inherits(roi, what = c("sf", "sfc")))
+            stop("the bbox should be an sf or sfc object.")
+
+        if (!sf::st_geometry_type(roi)[[1]] == "POLYGON")
+            stop("the bbox should be a POLYGON.")
+
+        pol <- sf::st_transform(roi, data_cube[["crs"]])
+    }
 
     # Get n_samples random points (plus a margin) in the data_cube's extent.
     # NOTE: the extra points would help if case st_sample returns less points or

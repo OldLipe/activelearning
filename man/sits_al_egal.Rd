@@ -12,7 +12,8 @@ sits_al_egal(
   beta = alpha,
   w = 0.5,
   n_samples = 1000,
-  multicores = 2
+  multicores = 2,
+  roi = NULL
 )
 }
 \arguments{
@@ -42,6 +43,8 @@ sampling algorithm.}
 \item{n_samples}{The number of random points to take.}
 
 \item{multicores}{The number of cores available for active learning.}
+
+\item{roi}{An \code{sf} or \code{sfc} from sf package.}
 }
 \value{
 \preformatted{           A sits tibble with the EGAL metric. This metric
@@ -54,7 +57,8 @@ sampling algorithm.}
 Active Learning improves the results of a classification by
 feeding the classifier with informative samples. This function returns a sits
 tibble of new samples selected at random along with their score in the metric
-Exploration Guided Active Learning (EGAL).
+Exploration Guided Active Learning (EGAL). Samples with a larger EGAL metric
+should be submitted first to a human expert for classification.
 }
 \references{
 Hu, R., Jane Delany, S., & Mac Namee, B. (2010). EGAL:

@@ -4,7 +4,7 @@
 \alias{.sits_get_random_points}
 \title{Get a sits tibble of random points in the given data cube.}
 \usage{
-.sits_get_random_points(data_cube, n_samples, multicores)
+.sits_get_random_points(data_cube, n_samples, multicores, roi = NULL)
 }
 \arguments{
 \item{data_cube}{A sits data cube.}
@@ -13,6 +13,8 @@
 sample size may be less than the requested size.}
 
 \item{multicores}{The number of cores available for active learning.}
+
+\item{roi}{An \code{sf} or \code{sfc} from sf package.}
 }
 \value{
 \preformatted{      A sits tibble of samples, including their time series.
